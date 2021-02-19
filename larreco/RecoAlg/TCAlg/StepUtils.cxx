@@ -3288,6 +3288,7 @@ namespace tca {
         for(unsigned short end1 = 0; end1 < 2; ++end1) {
           // no merge if there is a vertex at the end
           if(tj1.VtxID[end1] > 0) continue;
+          if (tj1.Pts.size() > tj1.Pts.max_size()) continue; // www: temporary solution for possible "Segmentation fault"
           // make a copy of tp1 so we can mess with it
           TrajPoint tp1 = tj1.Pts[tj1.EndPt[end1]];
           // do a local fit on the lastpass only using the last 3 points
