@@ -1025,6 +1025,19 @@ namespace tca {
     // now merge hits in each sub-list.
     for (unsigned short indx = 0; indx < wireHits.size(); ++indx) {
       auto& hitsOnWire = wireHits[indx];
+      
+      // www: check if hitsOnWire OK
+      double integral = 0.0;
+      for (auto allHitsIndex : hitsOnWire) {
+        if (allHitsIndex > (*evt.allHits).size() - 1) continue;;
+        auto& hit = (*evt.allHits)[allHitsIndex];
+        integral += hit.Integral();
+      } // hitsOnWire
+      if (integral <= 0) {
+        std::cout << "MergeTPHits found bad hit integral " << integral << "\n";
+        continue;
+      }
+
       newHitCol.push_back(MergeTPHitsOnWire(hitsOnWire));
       for (unsigned short ii = 0; ii < hitsOnWire.size(); ++ii) {
         newHitAssns[hitsOnWire[ii]] = newHitCol.size() - 1;
@@ -1042,7 +1055,7 @@ namespace tca {
     // merge the hits indexed by tpHits into one hit
 
     if (tpHits.empty()) return recob::Hit();
-
+    
     // no merge required. Just return a slightly modified copy of the single hit
     if (tpHits.size() == 1) {
       if (tpHits[0] > (*evt.allHits).size() - 1) {
@@ -1166,7 +1179,7 @@ namespace tca {
                       firstHit.View(),
                       firstHit.SignalType(),
                       firstHit.WireID());
-
+  
   } // MergeTPHits
 
   /////////////////////////////////////////
